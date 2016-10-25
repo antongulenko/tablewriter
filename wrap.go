@@ -16,6 +16,10 @@ import (
 var (
 	nl = "\n"
 	sp = " "
+
+	// TrimSpaces can be set to false to avoid trimming the spaces around
+	// table cell contents.
+	TrimSpaces = true
 )
 
 const defaultPenalty = 1e5
@@ -23,7 +27,10 @@ const defaultPenalty = 1e5
 // Wrap wraps s into a paragraph of lines of length lim, with minimal
 // raggedness.
 func WrapString(s string, lim int) ([]string, int) {
-	words := strings.Split(strings.Replace(strings.TrimSpace(s), nl, sp, -1), sp)
+	if TrimSpaces {
+		s = strings.TrimSpace(s)
+	}
+	words := strings.Split(strings.Replace(s, nl, sp, -1), sp)
 	var lines []string
 	max := 0
 	for _, v := range words {
@@ -95,8 +102,11 @@ func WrapWords(words []string, spc, lim, pen int) [][]string {
 // getLines decomposes a multiline string into a slice of strings.
 func getLines(s string) []string {
 	var lines []string
+	if TrimSpaces {
+		s = strings.TrimSpace(s)
+	}
 
-	for _, line := range strings.Split(strings.TrimSpace(s), nl) {
+	for _, line := range strings.Split(s, nl) {
 		lines = append(lines, line)
 	}
 	return lines
